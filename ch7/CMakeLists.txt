@@ -10,7 +10,12 @@ list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules )
 find_package( OpenCV 3.1 REQUIRED )
 # find_package( OpenCV REQUIRED ) # use this if in OpenCV2 
 find_package( G2O REQUIRED )
-find_package( CSparse REQUIRED )
+#find_package( CSparse REQUIRED )
+find_package(PkgConfig)
+pkg_check_modules(EIGEN REQUIRED eigen3)
+#pkg_search_module(EIGEN REQUIRED eigen3)
+include_directories( ${EIGEN_INCLUDE_DIRS} )
+MESSAGE(STATUS "${EIGEN_INCLUDE_DIRS}")
 
 include_directories( 
     ${OpenCV_INCLUDE_DIRS} 
@@ -30,12 +35,12 @@ target_link_libraries( pose_estimation_2d2d ${OpenCV_LIBS} )
 add_executable( triangulation triangulation.cpp )
 target_link_libraries( triangulation ${OpenCV_LIBS} )
 
-add_executable( pose_estimation_3d2d pose_estimation_3d2d.cpp )
-target_link_libraries( pose_estimation_3d2d 
-   ${OpenCV_LIBS}
-   ${CSPARSE_LIBRARY}
-   g2o_core g2o_stuff g2o_types_sba g2o_csparse_extension
-)
+#add_executable( pose_estimation_3d2d pose_estimation_3d2d.cpp )
+#target_link_libraries( pose_estimation_3d2d 
+#   ${OpenCV_LIBS}
+#   ${CSPARSE_LIBRARY}
+#   g2o_core g2o_stuff g2o_types_sba g2o_csparse_extension
+#)
 
 add_executable( pose_estimation_3d3d pose_estimation_3d3d.cpp )
 target_link_libraries( pose_estimation_3d3d 

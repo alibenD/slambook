@@ -13,7 +13,10 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 find_package( G2O )
 include_directories( ${G2O_INCLUDE_DIRS} ) 
 
-include_directories( "/usr/include/eigen3" )
+find_package(PkgConfig)
+pkg_check_modules(EIGEN REQUIRED eigen3)
+#pkg_search_module(EIGEN REQUIRED eigen3)
+include_directories( ${EIGEN_INCLUDE_DIRS} )
 
 set( G2O_LIBS 
     g2o_core g2o_types_sba g2o_solver_csparse g2o_stuff g2o_csparse_extension 

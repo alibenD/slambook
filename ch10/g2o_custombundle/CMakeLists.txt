@@ -7,8 +7,14 @@ set( CMAKE_CXX_FLAGS "-O3" )
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
 Find_Package(G2O REQUIRED)
-Find_Package(Eigen3 REQUIRED)
+#Find_Package(Eigen3 REQUIRED)
 Find_Package(Cholmod REQUIRED)
+
+find_package(PkgConfig)
+pkg_check_modules(EIGEN REQUIRED eigen3)
+#pkg_search_module(EIGEN REQUIRED eigen3)
+include_directories( ${EIGEN_INCLUDE_DIRS} )
+MESSAGE(STATUS "${EIGEN_INCLUDE_DIRS}")
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)

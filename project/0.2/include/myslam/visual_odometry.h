@@ -49,7 +49,7 @@ public:
     Mat                     descriptors_ref_;   // descriptor in reference frame 
     vector<cv::DMatch>      feature_matches_;
     
-    SE3 T_c_r_estimated_;  // the estimated pose of current frame 
+    SE3<double> T_c_r_estimated_;  // the estimated pose of current frame 
     int num_inliers_;        // number of inlier features in icp
     int num_lost_;           // number of lost times
     

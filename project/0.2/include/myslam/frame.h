@@ -34,13 +34,13 @@ public:
     typedef std::shared_ptr<Frame> Ptr;
     unsigned long                  id_;         // id of this frame
     double                         time_stamp_; // when it is recorded
-    SE3                            T_c_w_;      // transform from world to camera
+    SE3<double>                            T_c_w_;      // transform from world to camera
     Camera::Ptr                    camera_;     // Pinhole RGBD Camera model 
     Mat                            color_, depth_; // color and depth image 
     
 public: // data members 
     Frame();
-    Frame( long id, double time_stamp=0, SE3 T_c_w=SE3(), Camera::Ptr camera=nullptr, Mat color=Mat(), Mat depth=Mat() );
+    Frame( long id, double time_stamp=0, SE3<double> T_c_w=SE3<double>(), Camera::Ptr camera=nullptr, Mat color=Mat(), Mat depth=Mat() );
     ~Frame();
     
     // factory function

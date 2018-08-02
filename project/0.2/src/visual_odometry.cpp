@@ -20,6 +20,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
+#include <Eigen/Core>
+#include <opencv2/core/eigen.hpp>
 #include <algorithm>
 #include <boost/timer.hpp>
 
@@ -178,8 +180,19 @@ void VisualOdometry::poseEstimationPnP()
     cv::solvePnPRansac( pts3d, pts2d, K, Mat(), rvec, tvec, false, 100, 4.0, 0.99, inliers );
     num_inliers_ = inliers.rows;
     cout<<"pnp inliers: "<<num_inliers_<<endl;
-    T_c_r_estimated_ = SE3(
-        SO3(rvec.at<double>(0,0), rvec.at<double>(1,0), rvec.at<double>(2,0)), 
+    //T_c_r_estimated_ = SE3(
+    //    SO3(rvec.at<double>(0,0), rvec.at<double>(1,0), rvec.at<double>(2,0)), 
+    //    Vector3d( tvec.at<double>(0,0), tvec.at<double>(1,0), tvec.at<double>(2,0))
+    //);
+    cv::Mat R;
+    cv::Rodrigues(rvec, R);
+    Eigen::Matrix3d r;
+    cv::cv2eigen(R, r);
+
+    Eigen::AngleAxisd angle(r);
+    Eigen::Quaterniond q(r);
+    T_c_r_estimated_ = SE3<double>(
+        SO3<double>(q), 
         Vector3d( tvec.at<double>(0,0), tvec.at<double>(1,0), tvec.at<double>(2,0))
     );
 }

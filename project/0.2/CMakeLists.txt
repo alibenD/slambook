@@ -4,6 +4,23 @@ project ( myslam )
 set( CMAKE_CXX_COMPILER "g++" )
 set( CMAKE_BUILD_TYPE "Release" )
 set( CMAKE_CXX_FLAGS "-std=c++11 -march=native -O3" )
+if(APPLE)
+  SET(CMAKE_MACOSX_RPATH ON)
+endif(APPLE)
+# use, i.e. don't skip the full RPATH for the build tree
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+
+# when building, don't use the install RPATH already
+# (but later on when installing)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+
+# the RPATH to be used when installing
+SET(CMAKE_INSTALL_RPATH "")
+
+# don't add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+
 
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules )
 set( EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin )

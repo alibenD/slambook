@@ -9,6 +9,8 @@ FIND_PATH(G2O_INCLUDE_DIR g2o/core/base_vertex.h
   /opt/local/include
   /sw/local/include
   /sw/include
+  /Users/aliben/dev/env/include
+  /Users/aliben/dev/env/homebrew/include
   NO_DEFAULT_PATH
   )
 
@@ -25,6 +27,10 @@ MACRO(FIND_G2O_LIBRARY MYLIBRARY MYLIBRARYNAME)
     ${G2O_ROOT}/lib
     $ENV{G2O_ROOT}/lib/Debug
     $ENV{G2O_ROOT}/lib
+    /Users/aliben/dev/env/lib
+    /Users/aliben/dev/env/homebrew/lib
+    /Users/aliben/dev/env/lib/Debug
+    /Users/aliben/dev/env/homebrew/lib/Debug
     NO_DEFAULT_PATH
     )
 
@@ -38,6 +44,10 @@ MACRO(FIND_G2O_LIBRARY MYLIBRARY MYLIBRARYNAME)
     /usr/lib
     /usr/lib64
     /opt/local/lib
+    /Users/aliben/dev/env/lib
+    /Users/aliben/dev/env/homebrew/lib
+    /Users/aliben/dev/env/lib/Debug
+    /Users/aliben/dev/env/homebrew/lib/Debug
     /sw/local/lib
     /sw/lib
     )
@@ -49,6 +59,10 @@ MACRO(FIND_G2O_LIBRARY MYLIBRARY MYLIBRARYNAME)
     ${G2O_ROOT}/lib
     $ENV{G2O_ROOT}/lib/Release
     $ENV{G2O_ROOT}/lib
+    /Users/aliben/dev/env/lib
+    /Users/aliben/dev/env/homebrew/lib
+    /Users/aliben/dev/env/lib/Debug
+    /Users/aliben/dev/env/homebrew/lib/Debug
     NO_DEFAULT_PATH
     )
 
@@ -61,6 +75,10 @@ MACRO(FIND_G2O_LIBRARY MYLIBRARY MYLIBRARYNAME)
     /usr/local/lib64
     /usr/lib
     /usr/lib64
+    /Users/aliben/dev/env/lib
+    /Users/aliben/dev/env/homebrew/lib
+    /Users/aliben/dev/env/lib/Debug
+    /Users/aliben/dev/env/homebrew/lib/Debug
     /opt/local/lib
     /sw/local/lib
     /sw/lib

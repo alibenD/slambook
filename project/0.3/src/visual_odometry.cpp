@@ -20,6 +20,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
+#include <Eigen/Core>
+#include <opencv2/core/eigen.hpp>
 #include <algorithm>
 #include <boost/timer.hpp>
 
@@ -31,7 +33,7 @@ namespace myslam
 {
 
 VisualOdometry::VisualOdometry() :
-    state_ ( INITIALIZING ), ref_ ( nullptr ), curr_ ( nullptr ), map_ ( new Map ), num_lost_ ( 0 ), num_inliers_ ( 0 ), matcher_flann_( new cv::flann::LshIndexParams(5,10,2) )
+    state_ ( INITIALIZING ), ref_ ( nullptr ), curr_ ( nullptr ), map_ ( new Map ), num_lost_ ( 0 ), num_inliers_ ( 0 ), matcher_flann_( cv::Ptr<cv::flann::LshIndexParams>(new cv::flann::LshIndexParams(5,10,2)) )
 {
     num_of_features_    = Config::get<int> ( "number_of_features" );
     scale_factor_       = Config::get<double> ( "scale_factor" );
@@ -183,23 +185,39 @@ void VisualOdometry::poseEstimationPnP()
     cv::solvePnPRansac( pts3d, pts2d, K, Mat(), rvec, tvec, false, 100, 4.0, 0.99, inliers );
     num_inliers_ = inliers.rows;
     cout<<"pnp inliers: "<<num_inliers_<<endl;
-    T_c_r_estimated_ = SE3(
-        SO3(rvec.at<double>(0,0), rvec.at<double>(1,0), rvec.at<double>(2,0)), 
+    //T_c_r_estimated_ = SE3<double>(
+    //    SO3<double>(rvec.at<double>(0,0), rvec.at<double>(1,0), rvec.at<double>(2,0)), 
+    //    Vector3d( tvec.at<double>(0,0), tvec.at<double>(1,0), tvec.at<double>(2,0))
+    //);
+    cv::Mat R;
+    cv::Rodrigues(rvec, R);
+    Eigen::Matrix3d r;
+    cv::cv2eigen(R, r);
+
+    Eigen::AngleAxisd angle(r);
+    Eigen::Quaterniond q(r);
+    T_c_r_estimated_ = SE3<double>(
+        SO3<double>(q), 
         Vector3d( tvec.at<double>(0,0), tvec.at<double>(1,0), tvec.at<double>(2,0))
     );
     
     // using bundle adjustment to optimize the pose 
     typedef g2o::BlockSolver<g2o::BlockSolverTraits<6,2>> Block;
-    Block::LinearSolverType* linearSolver = new g2o::LinearSolverDense<Block::PoseMatrixType>();
-    Block* solver_ptr = new Block( linearSolver );
-    g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg ( solver_ptr );
+    //Block::LinearSolverType* linearSolver = new g2o::LinearSolverDense<Block::PoseMatrixType>();
+    //Block* solver_ptr = new Block( linearSolver );
+
+    auto linearSolver = g2o::make_unique<g2o::LinearSolverDense<Block::PoseMatrixType>>();// 线性方程求解器
+    auto blockSolver = g2o::make_unique<Block>(std::move(linearSolver));// 矩阵块求解器
+
+    //g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg ( solver_ptr );
+    g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg(std::move(blockSolver));
     g2o::SparseOptimizer optimizer;
     optimizer.setAlgorithm ( solver );
     
     g2o::VertexSE3Expmap* pose = new g2o::VertexSE3Expmap();
     pose->setId ( 0 );
     pose->setEstimate ( g2o::SE3Quat (
-        T_c_r_estimated_.rotation_matrix(), 
+        T_c_r_estimated_.rotationMatrix(), 
         T_c_r_estimated_.translation()
     ) );
     optimizer.addVertex ( pose );
@@ -222,7 +240,7 @@ void VisualOdometry::poseEstimationPnP()
     optimizer.initializeOptimization();
     optimizer.optimize(10);
     
-    T_c_r_estimated_ = SE3 (
+    T_c_r_estimated_ = SE3<double> (
         pose->estimate().rotation(),
         pose->estimate().translation()
     );

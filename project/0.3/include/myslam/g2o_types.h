@@ -40,8 +40,8 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
     virtual void computeError();
     virtual void linearizeOplus();
-    virtual bool read( std::istream& in ){}
-    virtual bool write( std::ostream& out) const {}
+    virtual bool read( std::istream& in ){ return true; }
+    virtual bool write( std::ostream& out) const {return true;}
     
 };
 
@@ -54,8 +54,8 @@ public:
     virtual void computeError();
     virtual void linearizeOplus();
     
-    virtual bool read( std::istream& in ){}
-    virtual bool write( std::ostream& out) const {}
+    virtual bool read( std::istream& in ){return true;}
+    virtual bool write( std::ostream& out) const {return true;}
     
     Vector3d point_;
 };
@@ -68,8 +68,8 @@ public:
     virtual void computeError();
     virtual void linearizeOplus();
     
-    virtual bool read( std::istream& in ){}
-    virtual bool write(std::ostream& os) const {};
+    virtual bool read( std::istream& in ){return true;}
+    virtual bool write(std::ostream& os) const {return true;};
     
     Vector3d point_;
     Camera* camera_;
